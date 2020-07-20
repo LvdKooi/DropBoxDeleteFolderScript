@@ -11,12 +11,8 @@ dbx = dropbox.Dropbox(TOKEN)
 last_week = date.today() - timedelta(days=DAGEN_GRENS)
 
 try:
-    file = open("./last_run", "rb")
-    buf = file.read()
-    date_string = ""
-
-    for byte in buf:
-        date_string += chr(byte)
+    file = open("./last_run", "r")
+    date_string = file.readline()
 
     last_run = isodate.parse_date(date_string)
     file.close()
