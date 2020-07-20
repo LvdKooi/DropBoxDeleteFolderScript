@@ -2,46 +2,64 @@
 import dropbox, sys, isodate
 from datetime import date, timedelta
 
-DAGEN_GRENS = 7
+DAGENGRENS = 7
 TOKEN = "jYeEYD8vu1oAAAAAAAAW9dP53LLFNiqd5Nd43yNi5rvLDnrtWY3umiraomLSj_-m"
 
-print("Initializing Dropbox API...")
-dbx = dropbox.Dropbox(TOKEN)
 
-last_week = date.today() - timedelta(days=DAGEN_GRENS)
+def main():
+    lastweek = date.today() - timedelta(days=DAGENGRENS)
+    lastrun = bepaallastrun(lastweek)
 
-try:
-    file = open("./last_run", "r")
-    date_string = file.readline()
+    if lastrun == lastweek:
+        sys.exit("Al helemaal bij met verwijderen. Er wordt niks uitgevoerd.")
 
-    last_run = isodate.parse_date(date_string)
-    file.close()
-except Exception:
-    print("Openen is mislukt, bestand last_run bestaat nog niet.")
-    last_run = last_week - timedelta(days=1)
+    fromdate = lastrun + timedelta(days=1)
 
-if last_run == last_week:
-    sys.exit("Al helemaal bij met verwijderen. Er wordt niks uitgevoerd.")
+    verwijdermappenvantotenmet(fromdate, lastweek)
 
-from_date = last_run + timedelta(days=1)
+    schrijflastrunweg(lastweek)
 
-while from_date <= last_week:
-    date_string = str(from_date)
-    print("Verwijderen van de map {}".format(date_string))
 
+def verwijdermappenvantotenmet(van, totenmet):
+    print("Initializing Dropbox API...")
+    dbx = dropbox.Dropbox(TOKEN)
+
+    while van <= totenmet:
+        datestring = str(van)
+
+        verwijderdropboxmap(dbx, datestring)
+
+        van = van + timedelta(days=1)
+
+
+def bepaallastrun(lastweek):
     try:
-        dbx.files_delete_v2(path="/PiCam/{}".format(date_string))
-        print("Verwijderen van map {} succesvol.".format(date_string))
+        file = open("./last_run", "r")
+        date_string = file.readline()
+        file.close()
+        return isodate.parse_date(date_string)
+    except Exception:
+        print("Openen van last_run niet gelukt, bestand bestaat nog niet. Bestand wordt zo alsnog aangemaakt.")
+        return lastweek - timedelta(days=1)
+
+
+def verwijderdropboxmap(dbx, datestring):
+    print("Verwijderen van de map {}".format(datestring))
+    try:
+        dbx.files_delete_v2(path="/PiCam/{}".format(datestring))
+        print("Verwijderen van map {} succesvol.".format(datestring))
 
     except Exception:
         print("Er iets mis gegaan, de map is waarschijnlijk reeds verwijderd.")
 
-    from_date = from_date + timedelta(days=1)
 
-try:
-    file = open("./last_run", "w")
-    file.write(str(last_week))
-except Exception:
-    sys.exit("openen is mislukt")
-finally:
-    file.close()
+def schrijflastrunweg(lastrun):
+    try:
+        file = open("./last_run", "w")
+        file.write(str(lastrun))
+        file.close()
+    except Exception:
+        sys.exit("Openen van last_run voor wegschrijven van datum is mislukt.")
+
+
+main()
