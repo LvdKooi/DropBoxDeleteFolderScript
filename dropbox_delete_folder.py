@@ -5,10 +5,11 @@ from datetime import date, timedelta
 DAGENGRENS = 7
 TOKEN = "jYeEYD8vu1oAAAAAAAAW9dP53LLFNiqd5Nd43yNi5rvLDnrtWY3umiraomLSj_-m"
 
-
 def main():
     lastweek = date.today() - timedelta(days=DAGENGRENS)
     lastrun = bepaallastrun(lastweek)
+
+    print(f"Laatste run is {lastrun} geweest.")
 
     if lastrun == lastweek:
         sys.exit("Al helemaal bij met verwijderen. Er wordt niks uitgevoerd.")
@@ -46,8 +47,8 @@ def bepaallastrun(lastweek):
 def verwijderdropboxmap(dbx, datestring):
     print("Verwijderen van de map {}".format(datestring))
     try:
-        dbx.files_delete_v2(path="/PiCam/{}".format(datestring))
-        print("Verwijderen van map {} succesvol.".format(datestring))
+        dbx.files_delete_v2(path=f"/PiCam/{datestring}")
+        print(f"Verwijderen van map {datestring} succesvol.")
 
     except Exception:
         print("Er iets mis gegaan, de map is waarschijnlijk reeds verwijderd.")
