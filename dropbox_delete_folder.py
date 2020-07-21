@@ -5,6 +5,7 @@ from datetime import date, timedelta
 DAGEN_GRENS = 7
 TOKEN = "jYeEYD8vu1oAAAAAAAAW9dP53LLFNiqd5Nd43yNi5rvLDnrtWY3umiraomLSj_-m"
 
+
 def main():
     last_week = date.today() - timedelta(days=DAGEN_GRENS)
     last_run = bepaal_last_run(last_week)
@@ -55,11 +56,13 @@ def verwijder_dropbox_map(dbx, date_string):
 
 
 def schrijf_last_run_weg(last_run):
-    with open("./last_run", "w") as file:
-        try:
+    try:
+        with open("./last_run", "w") as file:
+
             file.write(str(last_run))
 
-        except Exception:
-            sys.exit("Openen van last_run voor wegschrijven van datum is mislukt.")
+    except Exception:
+        sys.exit("Openen van last_run voor wegschrijven van datum is mislukt.")
+
 
 main()
