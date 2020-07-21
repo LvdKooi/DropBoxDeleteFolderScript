@@ -10,7 +10,7 @@ Script created by Laurens van der Kooi.
 
 This script is meant for periodically deleting a folder from Dropbox (by means of a Cronjob). It writes its 
 state to a file 'last_run' which it will create the first time. It is also capable of catching up after not having run 
-for a while.  
+for a while. The folders it deletes need to have a name that can be related to a date (e.g. 2020-07-14). 
 """
 
 
