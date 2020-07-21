@@ -14,7 +14,7 @@ def main():
 
     if last_run == last_week:
         print("Al helemaal bij met verwijderen. Er wordt niks uitgevoerd.")
-        return
+        sys.exit()
 
     from_date = last_run + timedelta(days=1)
 
