@@ -36,10 +36,9 @@ def verwijder_mappen_van_tot_en_met(van, tot_en_met):
 
 def bepaal_last_run(last_week):
     try:
-        file = open("./last_run", "r")
-        date_string = file.readline()
-        file.close()
-        return isodate.parse_date(date_string)
+        with open("./last_run", "r") as file:
+            date_string = file.readline()
+            return isodate.parse_date(date_string)
     except Exception:
         print("Openen van last_run niet gelukt, bestand bestaat nog niet. Bestand wordt zo alsnog aangemaakt.")
         return last_week - timedelta(days=1)
@@ -56,12 +55,11 @@ def verwijder_dropbox_map(dbx, date_string):
 
 
 def schrijf_last_run_weg(last_run):
-    try:
-        file = open("./last_run", "w")
-        file.write(str(last_run))
-        file.close()
-    except Exception:
-        sys.exit("Openen van last_run voor wegschrijven van datum is mislukt.")
+    with open("./last_run", "w") as file:
+        try:
+            file.write(str(last_run))
 
+        except Exception:
+            sys.exit("Openen van last_run voor wegschrijven van datum is mislukt.")
 
 main()
