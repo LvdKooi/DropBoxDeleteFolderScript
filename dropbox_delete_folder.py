@@ -1,68 +1,80 @@
 #!/usr/bin/env python3
-import dropbox, sys, isodate
 from datetime import date, timedelta
 
-DAGEN_GRENS = 7
+import dropbox
+import isodate
+import sys
+
+"""
+Script created by Laurens van der Kooi. 
+
+This script is meant for periodically deleting a folder from Dropbox (by means of a Cronjob). It writes its 
+state to a file 'last_run' which it will create the first time. It is also capable of catching up after not having run 
+for a while.  
+"""
+
+
+MAX_AGE_IN_DAYS = 7
 TOKEN = "jYeEYD8vu1oAAAAAAAAW9dP53LLFNiqd5Nd43yNi5rvLDnrtWY3umiraomLSj_-m"
 
 
 def main():
-    last_week = date.today() - timedelta(days=DAGEN_GRENS)
-    last_run = bepaal_last_run(last_week)
+    last_week = date.today() - timedelta(days=MAX_AGE_IN_DAYS)
+    last_run = get_last_run(last_week)
 
-    print(f"Laatste run is {last_run} geweest.")
+    print(f"Last run was on {last_run}.")
 
     if last_run == last_week:
-        print("Al helemaal bij met verwijderen. Er wordt niks uitgevoerd.")
+        print("Already up to date, program will exit.")
         sys.exit()
 
     from_date = last_run + timedelta(days=1)
 
-    verwijder_mappen_van_tot_en_met(from_date, last_week)
+    delete_folders_from_to(from_date, last_week)
 
-    schrijf_last_run_weg(last_week)
+    write_last_run_to_file(last_week)
 
 
-def verwijder_mappen_van_tot_en_met(van, tot_en_met):
+def delete_folders_from_to(from_date, to_date):
     print("Initializing Dropbox API...")
     dbx = dropbox.Dropbox(TOKEN)
 
-    while van <= tot_en_met:
-        date_string = str(van)
+    while from_date <= to_date:
+        date_string = str(from_date)
 
-        verwijder_dropbox_map(dbx, date_string)
+        delete_dropbox_folder(dbx, date_string)
 
-        van = van + timedelta(days=1)
+        from_date = from_date + timedelta(days=1)
 
 
-def bepaal_last_run(last_week):
+def get_last_run(last_week):
     try:
         with open("./last_run", "r") as file:
             date_string = file.readline()
             return isodate.parse_date(date_string)
     except Exception:
-        print("Openen van last_run niet gelukt, bestand bestaat nog niet. Bestand wordt zo alsnog aangemaakt.")
+        print("Couldn't open file 'last_run', because it doesn't exist yet. File will be created later on.")
         return last_week - timedelta(days=1)
 
 
-def verwijder_dropbox_map(dbx, date_string):
-    print("Verwijderen van de map {}".format(date_string))
+def delete_dropbox_folder(dbx, date_string):
+    print("Deleting folder: {}".format(date_string))
     try:
         dbx.files_delete_v2(path=f"/PiCam/{date_string}")
-        print(f"Verwijderen van map {date_string} succesvol.")
+        print(f"Successfully deleted folder: {date_string}.")
 
     except Exception:
-        print("Er iets mis gegaan, de map is waarschijnlijk reeds verwijderd.")
+        print("Something went wrong. Folder doesn't exist (anymore).")
 
 
-def schrijf_last_run_weg(last_run):
+def write_last_run_to_file(last_run):
     try:
         with open("./last_run", "w") as file:
 
             file.write(str(last_run))
 
     except Exception:
-        sys.exit("Openen van last_run voor wegschrijven van datum is mislukt.")
+        sys.exit("Failure while opening/creating file 'last_run'. This step is necessary to save this scripts' state.")
 
 
 main()
