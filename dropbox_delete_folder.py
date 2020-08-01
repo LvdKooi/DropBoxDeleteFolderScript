@@ -22,7 +22,7 @@ def main():
     last_week = date.today() - timedelta(days=MAX_AGE_IN_DAYS)
     last_run = get_last_run(last_week)
 
-    print(f"Last run was on {last_run}.")
+    print(f"Last run deleted folder: {last_run}")
 
     if last_run == last_week:
         print("Already up to date, program will exit.")
