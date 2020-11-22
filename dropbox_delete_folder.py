@@ -13,10 +13,7 @@ state to a file 'last_run' which it will create the first time. It is also capab
 for a while. The folders it deletes need to have a name that can be related to a date (e.g. 2020-07-14). 
 """
 
-
 MAX_AGE_IN_DAYS = 7
-TOKEN = "jYeEYD8vu1oAAAAAAAAW9dP53LLFNiqd5Nd43yNi5rvLDnrtWY3umiraomLSj_-m"
-
 
 def main():
     last_week = date.today() - timedelta(days=MAX_AGE_IN_DAYS)
@@ -35,9 +32,23 @@ def main():
     write_last_run_to_file(last_week)
 
 
+def get_dropbox():
+    auth_flow = dropbox.DropboxOAuth2FlowNoRedirect(consumer_key=read_file("./app_key"),
+                                                    consumer_secret=read_file("./app_secret"),
+                                                    token_access_type="offline")
+    try:
+        auth_flow.start()
+        oauth_result = auth_flow.finish(read_file("./oauth_acces_token"))
+    except Exception as e:
+        print('Error: %s' % (e,))
+        exit(1)
+
+    return dropbox.Dropbox(oauth2_access_token=oauth_result.access_token)
+
+
 def delete_folders_from_to(from_date, to_date):
     print("Initializing Dropbox API...")
-    dbx = dropbox.Dropbox(TOKEN)
+    dbx = get_dropbox()
 
     while from_date <= to_date:
         date_string = str(from_date)
@@ -45,6 +56,14 @@ def delete_folders_from_to(from_date, to_date):
         delete_dropbox_folder(dbx, date_string)
 
         from_date = from_date + timedelta(days=1)
+
+
+def read_file(path):
+    try:
+        with open(path, "r") as file:
+            return file.readline()
+    except Exception as e:
+        print(f"Couldn't open file {path}. Error: {e}")
 
 
 def get_last_run(last_week):
