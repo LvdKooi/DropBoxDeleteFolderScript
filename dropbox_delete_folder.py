@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
+import sys
 from datetime import date, timedelta
 
-import dropbox
 import isodate
-import sys
+from dropbox import dropbox
+from dropbox.exceptions import ApiError
 
 """
 Script created by Laurens van der Kooi. 
@@ -14,6 +15,7 @@ for a while. The folders it deletes need to have a name that can be related to a
 """
 
 MAX_AGE_IN_DAYS = 7
+
 
 def main():
     last_week = date.today() - timedelta(days=MAX_AGE_IN_DAYS)
@@ -29,21 +31,20 @@ def main():
 
     delete_folders_from_to(from_date, last_week)
 
-    write_last_run_to_file(last_week)
+
+def read_file(path):
+    try:
+        with open(path, "r") as file:
+            return file.readline()
+    except Exception as e:
+        print(f"Couldn't open file {path}. Error: {e}")
 
 
 def get_dropbox():
-    auth_flow = dropbox.DropboxOAuth2FlowNoRedirect(consumer_key=read_file("./app_key"),
-                                                    consumer_secret=read_file("./app_secret"),
-                                                    token_access_type="offline")
-    try:
-        auth_flow.start()
-        oauth_result = auth_flow.finish(read_file("./oauth_acces_token"))
-    except Exception as e:
-        print('Error: %s' % (e,))
-        exit(1)
-
-    return dropbox.Dropbox(oauth2_access_token=oauth_result.access_token)
+    dbx =dropbox.Dropbox(oauth2_refresh_token=read_file("./oauth_access_token"), app_key=read_file("./app_key"))
+    dbx.users_get_current_account()
+    print("Successfully set up client!")
+    return dbx
 
 
 def delete_folders_from_to(from_date, to_date):
@@ -57,13 +58,7 @@ def delete_folders_from_to(from_date, to_date):
 
         from_date = from_date + timedelta(days=1)
 
-
-def read_file(path):
-    try:
-        with open(path, "r") as file:
-            return file.readline()
-    except Exception as e:
-        print(f"Couldn't open file {path}. Error: {e}")
+    write_last_run_to_file(to_date)
 
 
 def get_last_run(last_week):
@@ -79,10 +74,11 @@ def get_last_run(last_week):
 def delete_dropbox_folder(dbx, date_string):
     print("Deleting folder: {}".format(date_string))
     try:
+        dbx.users_get_current_account()
         dbx.files_delete_v2(path=f"/PiCam/{date_string}")
         print(f"Successfully deleted folder: {date_string}.")
 
-    except Exception:
+    except ApiError as e:
         print("Something went wrong. Folder doesn't exist (anymore).")
 
 
