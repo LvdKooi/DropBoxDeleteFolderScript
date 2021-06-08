@@ -2,7 +2,8 @@ import dropbox
 from dropbox import DropboxOAuth2FlowNoRedirect
 
 '''
-Use this to setup a refresh token and the app key in order to the dropbox_delete_folder script
+Use this script to get and store a refresh token and app key before using 
+the dropbox_delete_folder script for the first time.
 '''
 app_key = input("What is the app-key?")
 
