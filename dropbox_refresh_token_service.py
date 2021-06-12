@@ -17,14 +17,14 @@ auth_code = input("Enter the authorization code here: ").strip()
 
 try:
     with open("./app_key", "w") as file:
-       file.write(app_key)
+        file.write(app_key)
 
     oauth_result = auth_flow.finish(auth_code)
 
     with open("./oauth_access_token", "w") as file:
-       file.write(oauth_result.refresh_token)
+        file.write(oauth_result.refresh_token)
 
+    print("Successfully saved api key and refresh token.")
 except Exception as e:
     print('Error: %s' % (e,))
     exit(1)
-
