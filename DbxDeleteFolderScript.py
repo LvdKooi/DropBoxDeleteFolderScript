@@ -39,7 +39,7 @@ def get_dropbox():
     app_key = read_file("./app_key")
 
     if oauth2_refresh_token is None or app_key is None:
-        print('Refresh token or app key appears to be missing, follow instructions below...')
+        print("Refresh token or app key appears to be missing, follow instructions below...")
         DbxTokenService.set_app_key_and_refresh_token()
 
     dbx = dropbox.Dropbox(oauth2_refresh_token=read_file("./oauth_access_token"), app_key=read_file("app_key_copy"))
