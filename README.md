@@ -2,11 +2,12 @@
 
 **The script**
 
-The script in DbxDeleteFolderScript.py is meant for periodically deleting a folder from Dropbox (by means of a Cronjob). It 
-writes its state to a file 'last_run' which it will create the first time. It is also capable of catching up after not 
-having run for a while. The folders it deletes need to have a name that can be related to a date (e.g. 2020-07-14). For 
-the first use it is necessary to run this script manually in order to set the app key and refresh token. After that, it 
-can run any time without any user interference.
+This repo contains a script (DbxDeleteFolderScript.py) which is meant for periodically deleting a folder from Dropbox 
+(by means of a Cronjob). It writes its state to a file 'last_run' which it will create the first time. The script is also 
+capable of catching up after not having run for a while. The folders it deletes need to have a name that can be related 
+to a date (e.g. 2020-07-14). For the first use it is necessary to run this script manually in order to set the app key 
+and refresh token. For this, this repo also contains a helper class (DbxTokenService) which facilitates this. After that, 
+it can run any time without any user interference.
 
 Created by: Laurens van der Kooi
 
