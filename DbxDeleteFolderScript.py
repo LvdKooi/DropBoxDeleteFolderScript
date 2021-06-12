@@ -6,12 +6,17 @@ import isodate
 from dropbox import dropbox
 from dropbox.exceptions import ApiError
 
+from DbxTokenService import DbxTokenService
+
 """
 Script created by Laurens van der Kooi. 
 
-This script is meant for periodically deleting a folder from Dropbox (by means of a Cronjob). It writes its 
-state to a file 'last_run' which it will create the first time. It is also capable of catching up after not having run 
-for a while. The folders it deletes need to have a name that can be related to a date (e.g. 2020-07-14). 
+This script is meant for periodically deleting a folder from Dropbox (by means of a Cronjob). It writes its state to a 
+file 'last_run' which it will create the first time. It is also capable of catching up after not having run 
+for a while. The folders it deletes need to have a name that can be related to a date (e.g. 2020-07-14). For the first
+use it is necessary to run this script manually in order to set the app key and refresh token. After that, it can run 
+any time without user interference.
+
 """
 
 MAX_AGE_IN_DAYS = 7
@@ -41,7 +46,14 @@ def read_file(path):
 
 
 def get_dropbox():
-    dbx =dropbox.Dropbox(oauth2_refresh_token=read_file("./oauth_access_token"), app_key=read_file("./app_key"))
+    oauth2_refresh_token = read_file("./oauth_access_token")
+    app_key = read_file("./app_key")
+
+    if oauth2_refresh_token is None or app_key is None:
+        print('Refresh token or app key appears to be missing, follow instructions below...')
+        DbxTokenService.set_app_key_and_refresh_token()
+
+    dbx = dropbox.Dropbox(oauth2_refresh_token=read_file("./oauth_access_token"), app_key=read_file("app_key_copy"))
     dbx.users_get_current_account()
     print("Successfully set up client!")
     return dbx
