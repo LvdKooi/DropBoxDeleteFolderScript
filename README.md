@@ -13,21 +13,30 @@ Created by: Laurens van der Kooi
 
 **Setting up Cronjobs**
 
-First, install packages and make python script executable (chmod +x)
+First, install packages and make python script executable (chmod +x). Change the shebang line as needed:
 
-Then in terminal: crontab -e
+* On OS X, the shebang line is #! /usr/bin/env python3.
+* On Linux, the shebang line is #! /usr/bin/python3.
 
+Check if the script runs (you might need to reformat the script with dos2unix in your Linux-based terminal, as shown below).
+
+```
+dos2unix ./DbxDeleteFolderSCript.py
+```
+Then in terminal: 
+
+```
+crontab -e
+```
 and
 
 On MacOs:
-
+```
 PATH = /Library/Frameworks/Python.framework/Versions/3.8/bin:/usr/local/bin:/usr/bin:/bin
 52 16 * * * /Users/laurensvanderkooi/PycharmProjects/DropBoxScripting/DbxDeleteFolderScript.py
-
+```
 On Linux:
-
+```
 52 16 * * * /Users/laurensvanderkooi/PycharmProjects/DropBoxScripting/DbxDeleteFolderScript.py
+```
 
-After typing:
-save by pressing Esc and type :wq
-ignore changes by typing :qa
