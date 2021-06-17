@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#! /usr/bin/python3
+import os
 import sys
 from datetime import date, timedelta
 
@@ -9,6 +10,7 @@ from dropbox.exceptions import ApiError
 from DbxTokenService import DbxTokenService
 
 MAX_AGE_IN_DAYS = 7
+LOCAL_WORKING_DIR = os.getcwd()  # replace if needed
 
 
 def main():
@@ -26,23 +28,13 @@ def main():
     delete_folders_from_to(from_date, last_week)
 
 
-def read_file(path):
-    try:
-        with open(path, "r") as file:
-            return file.readline()
-    except Exception as e:
-        print(f"Couldn't open file {path}. Error: {e}")
-
-
 def get_dropbox():
-    oauth2_refresh_token = read_file("./oauth_access_token")
-    app_key = read_file("./app_key")
+    key_token_pair = DbxTokenService.get_app_key_and_refresh_token(LOCAL_WORKING_DIR)
+    app_key = key_token_pair[0]
+    oauth2_refresh_token = key_token_pair[1]
 
-    if oauth2_refresh_token is None or app_key is None:
-        print("Refresh token or app key appears to be missing, follow instructions below...")
-        DbxTokenService.set_app_key_and_refresh_token()
-
-    dbx = dropbox.Dropbox(oauth2_refresh_token=read_file("./oauth_access_token"), app_key=read_file("./app_key"))
+    dbx = dropbox.Dropbox(oauth2_refresh_token=oauth2_refresh_token,
+                          app_key=app_key)
     dbx.users_get_current_account()
     print("Successfully set up client!")
     return dbx
@@ -64,7 +56,7 @@ def delete_folders_from_to(from_date, to_date):
 
 def get_last_run(last_week):
     try:
-        with open("./last_run", "r") as file:
+        with open(LOCAL_WORKING_DIR + "/last_run", "r") as file:
             date_string = file.readline()
             return isodate.parse_date(date_string)
     except Exception:
@@ -85,12 +77,10 @@ def delete_dropbox_folder(dbx, date_string):
 
 def write_last_run_to_file(last_run):
     try:
-        with open("./last_run", "w") as file:
+        with open(LOCAL_WORKING_DIR + "/last_run", "w") as file:
 
             file.write(str(last_run))
-
     except Exception:
         sys.exit("Failure while opening/creating file 'last_run'. This step is necessary to save this scripts' state.")
-
 
 main()
