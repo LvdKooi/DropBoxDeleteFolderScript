@@ -3,8 +3,8 @@ import os
 import sys
 from datetime import date, timedelta
 
+import dropbox
 import isodate
-from dropbox import dropbox
 from dropbox.exceptions import ApiError
 
 from DbxTokenService import DbxTokenService
@@ -82,5 +82,6 @@ def write_last_run_to_file(last_run):
             file.write(str(last_run))
     except Exception:
         sys.exit("Failure while opening/creating file 'last_run'. This step is necessary to save this scripts' state.")
+
 
 main()
