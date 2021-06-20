@@ -13,7 +13,7 @@ Created by: Laurens van der Kooi
 
 **Installing dependencies**
 
-Install packages the following packages: 
+Install the following packages: 
 
 ```
 pip install dropbox
