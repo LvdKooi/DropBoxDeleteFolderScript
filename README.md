@@ -11,24 +11,23 @@ it can run any time without any user interference.
 
 Created by: Laurens van der Kooi
 
-**Setting up Cronjobs**
+**Installing dependencies**
 
-First, install packages: 
+Install packages the following packages: 
 
 ```
 pip install dropbox
 pip instal isodate
 ```
-
-
-Then, make python script executable:
+**Setting up Cronjobs**
+First, make python script executable:
 ```
 chmod +x DbxDeleteFolderScript.pu
 ```
 Change the shebang line as needed:
 
 * On OS X, the shebang line is #! /usr/bin/env python3.
-* On Linux, the shebang line is #! /usr/bin/python3.
+* On Linux, the shebang line is #! /usr/bin/python3 (this one is already provided in the script).
 
 Check if the script runs (you might need to reformat the script with dos2unix in your Linux-based terminal, as shown below).
 
