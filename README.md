@@ -17,7 +17,7 @@ Install the following packages:
 
 ```
 pip install dropbox
-pip instal isodate
+pip insta;l isodate
 ```
 **Setting up Cronjobs**
 First, make python script executable:
