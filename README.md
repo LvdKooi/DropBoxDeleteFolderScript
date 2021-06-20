@@ -13,7 +13,19 @@ Created by: Laurens van der Kooi
 
 **Setting up Cronjobs**
 
-First, install packages and make python script executable (chmod +x). Change the shebang line as needed:
+First, install packages: 
+
+```
+pip install dropbox
+pip instal isodate
+```
+
+
+Then, make python script executable:
+```
+chmod +x DbxDeleteFolderScript.pu
+```
+Change the shebang line as needed:
 
 * On OS X, the shebang line is #! /usr/bin/env python3.
 * On Linux, the shebang line is #! /usr/bin/python3.
