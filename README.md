@@ -23,7 +23,7 @@ pip install isodate
 
 First, make python script executable:
 ```
-chmod +x DbxDeleteFolderScript.pu
+chmod +x ./DbxDeleteFolderScript.py
 ```
 Change the shebang line as needed:
 
@@ -33,7 +33,7 @@ Change the shebang line as needed:
 Check if the script runs (you might need to reformat the script with dos2unix in your Linux-based terminal, as shown below).
 
 ```
-dos2unix ./DbxDeleteFolderSCript.py
+dos2unix ./DbxDeleteFolderScript.py
 ```
 Then in terminal: 
 
